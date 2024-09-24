@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Greggs.Products.Api.Models;
+using Greggs.Products.Application.Application.Currency;
+using Greggs.Products.Application.Models;
 
-namespace Greggs.Products.Api.DataAccess;
+namespace Greggs.Products.Application.DataAccess;
 
 /// <summary>
 /// DISCLAIMER: This is only here to help enable the purpose of this exercise, this doesn't reflect the way we work!
@@ -21,7 +22,7 @@ public class ProductAccess : IDataAccess<Product>
         new() { Name = "Coca Cola", PriceInPounds = 1.2m }
     };
 
-    public IEnumerable<Product> List(int? pageStart, int? pageSize)
+    private IQueryable<Product> GetProductQuery(int? pageStart, int? pageSize)
     {
         var queryable = ProductDatabase.AsQueryable();
 
@@ -31,6 +32,22 @@ public class ProductAccess : IDataAccess<Product>
         if (pageSize.HasValue)
             queryable = queryable.Take(pageSize.Value);
 
+        return queryable;
+    }
+
+    public IEnumerable<Product> List(int? pageStart, int? pageSize)
+    {
+        var queryable = GetProductQuery(pageStart, pageSize);
+
         return queryable.ToList();
+    }
+
+    public IEnumerable<Product> ListByCurrency(CurrencyFactory.CurrencyTypeIndex currency, int? pageStart, int? pageSize)
+    {
+        var factory = new CurrencyFactory(currency);
+
+        var queryable = GetProductQuery(pageStart, pageSize);
+
+        return queryable.Select(x => new Product(x) { PriceInCurrency = factory.ConvertPoundToCurrency(x.PriceInPounds) } ).ToList();
     }
 }

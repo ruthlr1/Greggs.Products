@@ -1,3 +1,5 @@
+using Greggs.Products.Application.DataAccess;
+using Greggs.Products.Application.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,8 +12,9 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-
         services.AddSwaggerGen();
+
+        services.AddTransient(typeof(IDataAccess<Product>), typeof(ProductAccess));
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

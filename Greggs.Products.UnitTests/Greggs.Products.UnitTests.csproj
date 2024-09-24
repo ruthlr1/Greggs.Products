@@ -15,4 +15,9 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Greggs.Products.Application\Greggs.Products.Application.csproj" />
+  </ItemGroup>
+
+
 </Project>
